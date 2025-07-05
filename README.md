@@ -1,61 +1,281 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Ecommerce Platform
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A modern Laravel-based ecommerce platform that allows users to create shops, manage products, and explore marketplace offerings with role-based access control.
 
-## About Laravel
+## Features
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+### 🏪 Multi-Shop Platform
+- Users can request to become shop owners
+- Admin approval system for shop owner requests
+- Individual shop pages with custom branding and logos
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### 📦 Product Management
+- Full CRUD operations for products
+- Image uploads and inventory tracking
+- Advanced filtering by name and price range
+- Shop-specific product management
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### 👥 Role-Based Access Control
+- **Admin**: Manage shop requests, view all shops and products
+- **Shop Owner**: Create and manage their own shop and products
+- **User**: Browse products, request shop owner status
+- **Guest**: Explore products and shops without registration
 
-## Learning Laravel
+### 🎨 Modern UI/UX
+- Clean sidebar navigation for authenticated users
+- Responsive design with Tailwind CSS
+- Beautiful home page with feature showcase
+- Product exploration with advanced filtering
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Tech Stack
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+- **Backend**: Laravel 11
+- **Database**: PostgreSQL
+- **Frontend**: Blade Templates + Tailwind CSS
+- **Icons**: Font Awesome
+- **Containerization**: Docker (PostgreSQL)
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Installation
 
-## Laravel Sponsors
+### Prerequisites
+- PHP 8.2+
+- Composer
+- Docker & Docker Compose
+- Node.js (optional, for asset compilation)
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### Step 1: Clone Repository
+```bash
+git clone <repository-url>
+cd re-exam
+```
 
-### Premium Partners
+### Step 2: Install Dependencies
+```bash
+composer install
+```
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+### Step 3: Environment Setup
+```bash
+cp .env.example .env
+php artisan key:generate
+```
+
+### Step 4: Start PostgreSQL Database
+```bash
+docker-compose up -d
+```
+
+### Step 5: Run Migrations & Seeders
+```bash
+php artisan migrate
+php artisan db:seed
+```
+
+### Step 6: Create Storage Link
+```bash
+php artisan storage:link
+```
+
+### Step 7: Start Development Server
+```bash
+php artisan serve
+```
+
+Visit `http://localhost:8000`
+
+## Default Accounts
+
+After running seeders, you can login with:
+
+| Role | Email | Password |
+|------|-------|----------|
+| Admin | admin@example.com | password |
+| Shop Owner | shop@example.com | password |
+| Regular User | user@example.com | password |
+
+## Database Schema
+
+### Users Table
+- `id`, `name`, `email`, `password`
+- `role` (user, shop_owner, admin)
+- `created_at`, `updated_at`
+
+### Shop Owner Requests Table
+- `id`, `user_id`, `business_name`, `description`
+- `status` (pending, approved, rejected)
+- `created_at`, `updated_at`
+
+### Shops Table
+- `id`, `user_id`, `name`, `description`, `logo`
+- `created_at`, `updated_at`
+
+### Products Table
+- `id`, `shop_id`, `name`, `description`
+- `price`, `image`, `stock`
+- `created_at`, `updated_at`
+
+## API Routes
+
+### Public Routes
+- `GET /` - Home page
+- `GET /explore` - Browse all products
+- `GET /shops` - Browse all shops
+- `GET /shop/{id}` - View specific shop
+
+### Authentication Routes
+- `GET /login` - Login form
+- `POST /login` - Process login
+- `GET /register` - Registration form
+- `POST /register` - Process registration
+- `POST /logout` - Logout
+
+### User Routes (Authenticated)
+- `GET /dashboard` - User dashboard
+- `POST /shop-owner-request` - Request shop owner status
+
+### Admin Routes
+- `GET /admin/shop-requests` - Manage shop requests
+- `POST /admin/shop-requests/{id}/approve` - Approve request
+- `POST /admin/shop-requests/{id}/reject` - Reject request
+- `GET /admin/shops` - View all shops
+- `GET /admin/products` - View all products
+
+### Shop Owner Routes
+- `GET /shop/dashboard` - Shop dashboard
+- `GET /shop/create` - Create shop form
+- `POST /shop` - Store shop
+- `GET /shop/{id}/edit` - Edit shop
+- `PUT /shop/{id}` - Update shop
+- `GET /products` - Manage products
+- `GET /products/create` - Add product form
+- `POST /products` - Store product
+- `GET /products/{id}/edit` - Edit product
+- `PUT /products/{id}` - Update product
+- `DELETE /products/{id}` - Delete product
+
+## User Workflow
+
+### For Regular Users
+1. Register/Login
+2. Browse products via "Explore" page
+3. Visit individual shops
+4. Request shop owner status from dashboard
+
+### For Shop Owners
+1. Create shop with logo and description
+2. Add products with images and pricing
+3. Manage inventory and product details
+4. View shop analytics from dashboard
+
+### For Admins
+1. Review and approve/reject shop owner requests
+2. Monitor all shops and products
+3. Manage platform oversight
+
+## File Structure
+
+```
+app/
+├── Http/Controllers/
+│   ├── AuthController.php
+│   ├── ProductController.php
+│   ├── ShopController.php
+│   └── ShopOwnerRequestController.php
+├── Http/Middleware/
+│   ├── AdminMiddleware.php
+│   └── ShopOwnerMiddleware.php
+└── Models/
+    ├── User.php
+    ├── Shop.php
+    ├── Product.php
+    └── ShopOwnerRequest.php
+
+resources/views/
+├── layouts/app.blade.php
+├── welcome.blade.php
+├── dashboard.blade.php
+├── auth/
+├── admin/
+├── shop/
+├── products/
+└── shops/
+
+database/
+├── migrations/
+└── seeders/
+```
+
+## Configuration
+
+### Database Configuration (.env)
+```env
+DB_CONNECTION=pgsql
+DB_HOST=127.0.0.1
+DB_PORT=5433
+DB_DATABASE=ecommerce_db
+DB_USERNAME=postgres
+DB_PASSWORD=password
+```
+
+### Docker Configuration (docker-compose.yml)
+```yaml
+services:
+  postgres:
+    image: postgres:15
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_DB: ecommerce_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+```
+
+## Development Commands
+
+```bash
+# Reset database
+php artisan migrate:fresh --seed
+
+# Create new migration
+php artisan make:migration create_table_name
+
+# Create new controller
+php artisan make:controller ControllerName
+
+# Create new model
+php artisan make:model ModelName
+
+# Run specific seeder
+php artisan db:seed --class=SeederName
+```
+
+## Troubleshooting
+
+### Common Issues
+
+1. **Database Connection Error**
+   - Ensure PostgreSQL container is running: `docker-compose ps`
+   - Check database credentials in `.env`
+
+2. **Storage Link Issues**
+   - Run: `php artisan storage:link`
+   - Check file permissions
+
+3. **Migration Errors**
+   - Reset database: `php artisan migrate:fresh`
+   - Check migration files for syntax errors
+
+4. **Seeder Issues**
+   - Run specific seeder: `php artisan db:seed --class=AdminUserSeeder`
+   - Check seeder class names and namespaces
 
 ## Contributing
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+1. Fork the repository
+2. Create feature branch
+3. Make changes
+4. Submit pull request
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+This project is open-sourced software licensed under the MIT license.
