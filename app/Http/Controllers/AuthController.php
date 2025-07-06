@@ -62,7 +62,11 @@ class AuthController extends Controller
 
     public function handleGoogleCallback()
     {
-        $googleUser = Socialite::driver('google')->user();
+        try {
+            $googleUser = Socialite::driver('google')->stateless()->user();
+        } catch (\Exception $e) {
+            return redirect()->route('login.form')->withErrors(['error' => 'Google authentication failed. Please try again.']);
+        }
         
         $user = User::where('google_id', $googleUser->id)
                    ->orWhere('email', $googleUser->email)
